@@ -17,6 +17,9 @@ navbar:
           href: introduccion_a_dplyr.html
         - text: "Introducción a ggplot2"
           href: introduccion_a_ggplot2.html
+        - text: "Clase"
+          href: 02_Probabilidad.html
+
   right:
     - text: "por Agustín Alesso"
       href: about.html
