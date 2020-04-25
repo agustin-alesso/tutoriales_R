@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>Introducción a dplyr</title>
 
+<script src="site_libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
@@ -25,9 +26,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
-<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
-<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -76,9 +76,7 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -92,7 +90,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -102,6 +99,9 @@ img {
 }
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -117,7 +117,6 @@ body {
   padding-top: 69px;
   margin-top: -69px;
 }
-
 .section h2 {
   padding-top: 69px;
   margin-top: -69px;
@@ -137,6 +136,43 @@ body {
 .section h6 {
   padding-top: 69px;
   margin-top: -69px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -158,47 +194,66 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 
 
-
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -212,6 +267,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -247,8 +308,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -257,6 +316,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -330,13 +399,13 @@ div.tocify {
 </div>
 
 
-<div id="que-es-dplyr" class="section level2">
+<div id="qué-es-dplyr" class="section level2">
 <h2>¿Qué es <code>dplyr</code>?</h2>
 <p><code>dplyr</code> es un paquete de <strong>R</strong> muy potente para la exploración, transformación y resumen de datos en formato de tabla con filas (observaciones) y columnas (variables). Es un componente de un conjunto de packages llamado <code>tidyverse</code> desarrollados por <a href="http://hadley.nz/">Hadley Wickham</a></p>
 <p>El paquete contiene un conjunto de funciones (o <em>verbos</em>) que realizan operaciones comunes para el manejo de datos tales como: filtrar filas, seleccionar columnas, re-ordenar filas, agregar o transformar columnas, resumir datos. También permite agrupar los datos facilitando la estrategia <em>split-apply-combine</em>, es decir, dividir (<em>split</em>) los datos según una variable de grupo, aplicar (<em>apply</em>) alguna transformación o resumen y combinar (<em>combine</em>) las partes para presentar los resultados.</p>
 <p>Si bien <strong>R</strong> base tiene funciones que realizan las mismas tareas (<code>split()</code>, <code>subset()</code>, <code>apply()</code>, <code>sapply()</code>, <code>lapply()</code>, <code>tapply()</code> and <code>aggregate()</code>), el paquete <code>dplyr</code> brinda una interface más consistente que permite trabajar de manera más facil con <code>data.frame</code> (tabla de datos) más que con vectores.</p>
 </div>
-<div id="como-conseguir-dplyr" class="section level2">
+<div id="cómo-conseguir-dplyr" class="section level2">
 <h2>¿Cómo conseguir <code>dplyr</code>?</h2>
 <p>Para instalar por primera vez en la computadora:</p>
 <pre class="r"><code># Solo
@@ -357,14 +426,14 @@ library(&quot;dplyr&quot;)</code></pre>
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code># O junto con la familia tidyverse
 library(&quot;tidyverse&quot;)</code></pre>
-<pre><code>## ── Attaching packages ───────────────────</code></pre>
-<pre><code>## ✔ ggplot2 3.0.0     ✔ readr   1.1.1
-## ✔ tibble  1.4.2     ✔ purrr   0.2.5
-## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
-## ✔ ggplot2 3.0.0     ✔ forcats 0.3.0</code></pre>
-<pre><code>## ── Conflicts ─── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.0     ✓ purrr   0.3.4
+## ✓ tibble  3.0.1     ✓ stringr 1.4.0
+## ✓ tidyr   1.0.2     ✓ forcats 0.5.0
+## ✓ readr   1.3.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
 <p><strong>R</strong> va a avisarnos en la consola que esta enmascarando (reemplazando) algunas funciones que ya estaban en el entorno, o bien el paquete nos devuelve algun mensaje. A menos que diga <code>Error ...</code>, eso está bien.</p>
 </div>
 <div id="verbos-importantes-de-dplyr-para-recordar" class="section level2">
@@ -412,7 +481,7 @@ library(&quot;tidyverse&quot;)</code></pre>
 <p><code>function(que_datos, que_hacer_con_los_datos)</code></p>
 <p>En <code>que_datos</code> hay que poner el nombre del set de datos o <code>data.frame</code> (a menos que se use el operador <code>%&gt;%</code> para encadenar, mas adelante) y en <code>que_hacer_con_los_datos</code> indicar que operación, condicion, transformacion, etc aplicar a las filas y columnas.</p>
 </div>
-<div id="dplyr-en-accion" class="section level2">
+<div id="dplyr-en-acción" class="section level2">
 <h2><code>dplyr</code> en acción</h2>
 <p>Para ilustrar el uso del paquete vamos a usar los datos contenidos en el archivo <a href="https://github.com/Estadistica-FCA/tutoriales_R/raw/master/data/pesada_terneros.xlsx"><code>pesada_terneros.xlsx</code></a>. Para más detalles ir a la hoja de descripción de datos.</p>
 <pre class="r"><code># Cargar los datos con readxl
@@ -437,7 +506,7 @@ select(terneros, Procedencia, IDV, Peso)</code></pre>
 ##  8 La Rosita   LH837F508   188
 ##  9 La Rosita   GN685B256   172
 ## 10 La Rosita   QW110A058   172
-## # ... with 1,588 more rows</code></pre>
+## # … with 1,588 more rows</code></pre>
 <pre class="r"><code># Creando un nuevo set de datos
 mis_columnas &lt;- select(terneros, Procedencia, IDV, Peso)</code></pre>
 <p>Por defecto, si no se asigna a un nuevo objeto, el resultado de la operación se imprime en la consola con la función <code>print()</code> la cual por defecto muestra las 10 primeras observaciones y la cantidad de columnas que entran en la pantalla. Aquellas columnas que no entran son indicadas al pie.</p>
@@ -461,8 +530,8 @@ mis_columnas &lt;- select(terneros, Procedencia, IDV, Peso)</code></pre>
 ## 13 La Rosita   LH837F514   198
 ## 14 La Rosita   II641B940   200
 ## 15 La Rosita   IY735C      242
-## # ... with 1,583 more rows</code></pre>
-<p>Con <code>n = &quot;all&quot;</code> se imprimen todas (no se muestra por razones obvias)</p>
+## # … with 1,583 more rows</code></pre>
+<p>Con <code>n = "all"</code> se imprimen todas (no se muestra por razones obvias)</p>
 <p>El orden en que aparecen las variables en el resultado es el orden que se utilizó al seleccionarlas.</p>
 <pre class="r"><code># El orden altera el producto
 select(terneros, Procedencia, IDV, Peso)</code></pre>
@@ -479,7 +548,7 @@ select(terneros, Procedencia, IDV, Peso)</code></pre>
 ##  8 La Rosita   LH837F508   188
 ##  9 La Rosita   GN685B256   172
 ## 10 La Rosita   QW110A058   172
-## # ... with 1,588 more rows</code></pre>
+## # … with 1,588 more rows</code></pre>
 <p>También se puede usar los comnados <code>starts_with()</code>, <code>ends_with()</code>, <code>contains()</code>, etc (ver <code>?select_helpers)</code> para más opciones). Para elegir varias columnas que tienen un patron sin tener que tipear todos los nombres.</p>
 <pre class="r"><code># Selecciona columnas que empiezan con P
 select(terneros, starts_with(&quot;P&quot;))</code></pre>
@@ -496,24 +565,24 @@ select(terneros, starts_with(&quot;P&quot;))</code></pre>
 ##  8 La Rosita     188
 ##  9 La Rosita     172
 ## 10 La Rosita     172
-## # ... with 1,588 more rows</code></pre>
+## # … with 1,588 more rows</code></pre>
 <p>Para omitir algunas columnas en la seleccion se puede usar el <code>-</code> antes del nombre.</p>
 <pre class="r"><code># Selecciona columnas que empiezan con P
 select(terneros, -IDV, -starts_with(&quot;P&quot;))</code></pre>
 <pre><code>## # A tibble: 1,598 x 5
-##    Sexo  `Fecha Ingreso`     Categoria Fecha              
-##    &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
-##  1 Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00
-##  2 Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00
-##  3 Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00
-##  4 Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00
-##  5 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
-##  6 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
-##  7 Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00
-##  8 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
-##  9 Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00
-## 10 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
-## # ... with 1,588 more rows, and 1 more variable: Hora &lt;dttm&gt;</code></pre>
+##    Sexo  `Fecha Ingreso`     Categoria Fecha               Hora               
+##    &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;              &lt;dttm&gt;             
+##  1 Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 16:39:07
+##  2 Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 16:41:34
+##  3 Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 16:42:35
+##  4 Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 14:55:52
+##  5 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 14:59:13
+##  6 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 15:00:39
+##  7 Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 15:03:03
+##  8 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 16:51:24
+##  9 Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 16:55:40
+## 10 Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00 1899-12-31 16:57:47
+## # … with 1,588 more rows</code></pre>
 </div>
 <div id="seleccionando-observaciones" class="section level3">
 <h3>Seleccionando observaciones</h3>
@@ -522,98 +591,92 @@ select(terneros, -IDV, -starts_with(&quot;P&quot;))</code></pre>
 <pre class="r"><code># Sin asignar
 filter(terneros, Procedencia == &#39;Los Corralitos&#39;)</code></pre>
 <pre><code>## # A tibble: 575 x 8
-##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria
-##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    
-##  1 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero  
-##  2 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  3 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  4 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero  
-##  5 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  6 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  7 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  8 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  9 PO15… Los Corral… Macho 2017-06-06 00:00:00 Ternero  
-## 10 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-## # ... with 565 more rows, and 3 more variables: Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;,
-## #   Peso &lt;dbl&gt;</code></pre>
+##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria Fecha              
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
+##  1 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero   2017-04-10 00:00:00
+##  2 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  3 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  4 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero   2017-04-10 00:00:00
+##  5 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  6 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  7 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  8 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  9 PO15… Los Corral… Macho 2017-06-06 00:00:00 Ternero   2017-04-10 00:00:00
+## 10 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+## # … with 565 more rows, and 2 more variables: Hora &lt;dttm&gt;, Peso &lt;dbl&gt;</code></pre>
 <pre class="r"><code># Creando un nuevo set de datos
 corralitos &lt;- filter(terneros, Procedencia == &#39;Los Corralitos&#39;)</code></pre>
 <p>La seleccion se puede hacer por más de una condicion. Por ejemplo, seleccionar los de <code>Los Corralitos</code> que pesen más de 200 kg:</p>
 <pre class="r"><code>filter(terneros, Procedencia == &#39;Los Corralitos&#39;, Peso &gt; 200)</code></pre>
 <pre><code>## # A tibble: 260 x 8
-##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria
-##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    
-##  1 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero  
-##  2 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  3 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  4 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  5 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  6 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  7 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  8 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero  
-##  9 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-## 10 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-## # ... with 250 more rows, and 3 more variables: Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;,
-## #   Peso &lt;dbl&gt;</code></pre>
+##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria Fecha              
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
+##  1 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero   2017-04-10 00:00:00
+##  2 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  3 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  4 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  5 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  6 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  7 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  8 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero   2017-04-10 00:00:00
+##  9 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+## 10 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+## # … with 250 more rows, and 2 more variables: Hora &lt;dttm&gt;, Peso &lt;dbl&gt;</code></pre>
 <p><code>filter()</code> asume que cada condicion se debe cumplir en simultaneo para que la observación sea seleccionada. Esto equivale a utilizar el operador <code>&amp;</code> (<em>Y</em>). En caso de querer seleccionar aquellos registros que cumple una u otra condicion se usa el operador <code>|</code> (<em>O</em>). Poniendo <code>!</code> delante de la condicion se invierte la selección.</p>
 <pre class="r"><code># Operador &amp;
 filter(terneros, Procedencia == &#39;Los Corralitos&#39; &amp; Peso &gt; 200)</code></pre>
 <pre><code>## # A tibble: 260 x 8
-##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria
-##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    
-##  1 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero  
-##  2 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  3 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  4 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  5 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  6 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  7 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  8 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero  
-##  9 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-## 10 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-## # ... with 250 more rows, and 3 more variables: Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;,
-## #   Peso &lt;dbl&gt;</code></pre>
+##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria Fecha              
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
+##  1 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero   2017-04-10 00:00:00
+##  2 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  3 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  4 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  5 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  6 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  7 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  8 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero   2017-04-10 00:00:00
+##  9 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+## 10 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+## # … with 250 more rows, and 2 more variables: Hora &lt;dttm&gt;, Peso &lt;dbl&gt;</code></pre>
 <pre class="r"><code># Operador |
 filter(terneros, Procedencia == &#39;Los Corralitos&#39; | Peso &gt; 200)</code></pre>
 <pre><code>## # A tibble: 779 x 8
-##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria
-##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    
-##  1 NR04… La Rosita   Macho 2017-07-20 00:00:00 Ternero  
-##  2 LH83… La Rosita   Macho 2017-07-24 00:00:00 Ternero  
-##  3 IY73… La Rosita   Macho 2017-07-22 00:00:00 Ternero  
-##  4 QW11… La Rosita   Macho 2017-07-24 00:00:00 Ternero  
-##  5 LH83… La Rosita   Macho 2017-07-20 00:00:00 Ternero  
-##  6 DS28… La Rosita   Macho 2017-07-24 00:00:00 Ternero  
-##  7 TL69… La Rosita   Macho 2017-07-20 00:00:00 Ternero  
-##  8 LH83… La Rosita   Macho 2017-07-21 00:00:00 Ternero  
-##  9 IW75… La Rosita   Macho 2017-07-24 00:00:00 Ternero  
-## 10 NO13… Las Glicin… Macho 2017-07-23 00:00:00 Ternero  
-## # ... with 769 more rows, and 3 more variables: Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;,
-## #   Peso &lt;dbl&gt;</code></pre>
+##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria Fecha              
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
+##  1 NR04… La Rosita   Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00
+##  2 LH83… La Rosita   Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
+##  3 IY73… La Rosita   Macho 2017-07-22 00:00:00 Ternero   2017-04-06 00:00:00
+##  4 QW11… La Rosita   Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
+##  5 LH83… La Rosita   Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00
+##  6 DS28… La Rosita   Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
+##  7 TL69… La Rosita   Macho 2017-07-20 00:00:00 Ternero   2017-04-06 00:00:00
+##  8 LH83… La Rosita   Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00
+##  9 IW75… La Rosita   Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
+## 10 NO13… Las Glicin… Macho 2017-07-23 00:00:00 Ternero   2017-04-09 00:00:00
+## # … with 769 more rows, and 2 more variables: Hora &lt;dttm&gt;, Peso &lt;dbl&gt;</code></pre>
 <p>Con el operador <code>%in%</code> se puede especificar un rango de valores que deben cumplir. Por ejemplo terneros de <code>Los Corralitos</code>, <code>Las Glicinas</code> y <code>Don Alberto</code></p>
 <pre class="r"><code># Indicando cada nombre
 filter(terneros, Procedencia == &#39;Los Corralitos&#39;, Procedencia == &#39;Las Glicinas&#39;, Procedencia == &#39;Don Alberto&#39;)</code></pre>
 <pre><code>## # A tibble: 0 x 8
-## # ... with 8 variables: IDV &lt;chr&gt;, Procedencia &lt;chr&gt;, Sexo &lt;chr&gt;, `Fecha
-## #   Ingreso` &lt;dttm&gt;, Categoria &lt;chr&gt;, Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;,
-## #   Peso &lt;dbl&gt;</code></pre>
+## # … with 8 variables: IDV &lt;chr&gt;, Procedencia &lt;chr&gt;, Sexo &lt;chr&gt;, `Fecha
+## #   Ingreso` &lt;dttm&gt;, Categoria &lt;chr&gt;, Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;, Peso &lt;dbl&gt;</code></pre>
 <pre class="r"><code># Más resumido con %in%
 filter(terneros, Procedencia %in% c(&#39;Los Corralitos&#39;, &#39;Las Glicinas&#39;, &#39;Don Alberto&#39;))</code></pre>
 <pre><code>## # A tibble: 1,138 x 8
-##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria
-##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    
-##  1 SZ20… Las Glicin… Macho 2017-07-20 00:00:00 Ternero  
-##  2 SZ20… Las Glicin… Macho 2017-06-05 00:00:00 Ternero  
-##  3 SZ20… Las Glicin… Macho 2017-06-05 00:00:00 Ternero  
-##  4 SZ20… Las Glicin… Macho 2017-06-05 00:00:00 Ternero  
-##  5 GT54… Las Glicin… Macho 2017-07-21 00:00:00 Ternero  
-##  6 OQ15… Las Glicin… Macho 2017-07-21 00:00:00 Ternero  
-##  7 NO13… Las Glicin… Macho 2017-07-24 00:00:00 Ternero  
-##  8 SZ20… Las Glicin… Macho 2017-07-22 00:00:00 Ternero  
-##  9 OQ15… Las Glicin… Macho 2017-07-20 00:00:00 Ternero  
-## 10 NO13… Las Glicin… Macho 2017-07-20 00:00:00 Ternero  
-## # ... with 1,128 more rows, and 3 more variables: Fecha &lt;dttm&gt;,
-## #   Hora &lt;dttm&gt;, Peso &lt;dbl&gt;</code></pre>
+##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria Fecha              
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
+##  1 SZ20… Las Glicin… Macho 2017-07-20 00:00:00 Ternero   2017-04-09 00:00:00
+##  2 SZ20… Las Glicin… Macho 2017-06-05 00:00:00 Ternero   2017-04-09 00:00:00
+##  3 SZ20… Las Glicin… Macho 2017-06-05 00:00:00 Ternero   2017-04-09 00:00:00
+##  4 SZ20… Las Glicin… Macho 2017-06-05 00:00:00 Ternero   2017-04-09 00:00:00
+##  5 GT54… Las Glicin… Macho 2017-07-21 00:00:00 Ternero   2017-04-09 00:00:00
+##  6 OQ15… Las Glicin… Macho 2017-07-21 00:00:00 Ternero   2017-04-09 00:00:00
+##  7 NO13… Las Glicin… Macho 2017-07-24 00:00:00 Ternero   2017-04-09 00:00:00
+##  8 SZ20… Las Glicin… Macho 2017-07-22 00:00:00 Ternero   2017-04-09 00:00:00
+##  9 OQ15… Las Glicin… Macho 2017-07-20 00:00:00 Ternero   2017-04-09 00:00:00
+## 10 NO13… Las Glicin… Macho 2017-07-20 00:00:00 Ternero   2017-04-09 00:00:00
+## # … with 1,128 more rows, and 2 more variables: Hora &lt;dttm&gt;, Peso &lt;dbl&gt;</code></pre>
 </div>
 <div id="encadenando-operaciones-operador" class="section level3">
 <h3>Encadenando operaciones (operador <code>%&gt;%</code>)</h3>
@@ -635,7 +698,7 @@ terneros2</code></pre>
 ##  8 LH837F508   188
 ##  9 GN685B256   172
 ## 10 QW110A058   172
-## # ... with 1,588 more rows</code></pre>
+## # … with 1,588 more rows</code></pre>
 <pre class="r"><code>terneros2 &lt;- filter(terneros2, Peso &gt; 250)
 terneros2</code></pre>
 <pre><code>## # A tibble: 75 x 2
@@ -651,7 +714,7 @@ terneros2</code></pre>
 ##  8 NO133A045   264
 ##  9 PO150A571   264
 ## 10 PO150A686   262
-## # ... with 65 more rows</code></pre>
+## # … with 65 more rows</code></pre>
 <pre class="r"><code># Anidando
 filter(select(terneros, IDV, Peso), Peso &gt; 250)</code></pre>
 <pre><code>## # A tibble: 75 x 2
@@ -667,7 +730,7 @@ filter(select(terneros, IDV, Peso), Peso &gt; 250)</code></pre>
 ##  8 NO133A045   264
 ##  9 PO150A571   264
 ## 10 PO150A686   262
-## # ... with 65 more rows</code></pre>
+## # … with 65 more rows</code></pre>
 <pre class="r"><code># Usando %&gt;%
 terneros %&gt;%
   select(IDV, Peso) %&gt;%
@@ -685,7 +748,7 @@ terneros %&gt;%
 ##  8 NO133A045   264
 ##  9 PO150A571   264
 ## 10 PO150A686   262
-## # ... with 65 more rows</code></pre>
+## # … with 65 more rows</code></pre>
 <p>Con <code>%&gt;%</code> se puede omitir el nombre de la tabla sobre la que se está trabajando (bonus: menos tipeo).</p>
 <p>La última opción se lee: _tomar la tabla <code>terneros</code>, <strong>luego</strong> seleccionar las columnas <code>IDV</code> y <code>Peso</code>, <strong>luego</strong> filtrar los terneros con pesos mayores a 250 kg.</p>
 <p>El operador de encadenamiento es muy útil cuando se encadenan muchas operaciones.</p>
@@ -711,7 +774,7 @@ terneros %&gt;%
 ##  8 PO150A716   254
 ##  9 NO133A006   256
 ## 10 OQ152A553   256
-## # ... with 65 more rows</code></pre>
+## # … with 65 more rows</code></pre>
 <p>Con <code>decs(variable)</code> se ordena de mayor a menor</p>
 <pre class="r"><code># Ordenar de mayor a menor
 terneros %&gt;%
@@ -731,7 +794,7 @@ terneros %&gt;%
 ##  8 PO150A821   284
 ##  9 IA671B045   282
 ## 10 NO133A000   280
-## # ... with 65 more rows</code></pre>
+## # … with 65 more rows</code></pre>
 </div>
 <div id="crear-o-transformar-columnas" class="section level3">
 <h3>Crear o transformar columnas</h3>
@@ -752,7 +815,7 @@ terneros %&gt;%
 ##  8   188     5.24 35344
 ##  9   172     5.15 29584
 ## 10   172     5.15 29584
-## # ... with 1,588 more rows</code></pre>
+## # … with 1,588 more rows</code></pre>
 <p>Esto no cambia el set de datos <code>terneros</code> ya que no se lo asignó a ningun objeto. Para sobreescribir o actualiza el set de datos <code>terneros</code> hay que asignarlo al mismo objeto.</p>
 <pre class="r"><code>terneros &lt;- terneros %&gt;% 
   mutate(log_peso = log(Peso), peso2 = Peso**2)</code></pre>
@@ -816,7 +879,7 @@ terneros %&gt;%
 ## 13 Los Corralitos FALSE          315
 ## 14 Los Corralitos TRUE           260</code></pre>
 </div>
-<div id="agrupar-ultimo-pero-no-menos-importante" class="section level3">
+<div id="agrupar-último-pero-no-menos-importante" class="section level3">
 <h3>Agrupar (último pero no menos importante)</h3>
 <p>El verbo <code>group_by()</code> es muy útil para aplicar operaciones en subgrupos y presentar todo junto (<em>split-apply-combine</em>). Lo que hace es indicar que en el <code>data.frame</code> hay una o más variables que conforman los grupos. Luego cada operación se aplica a esos subgrupos.</p>
 <p>Ejemplo: calcular media, desvio, n y suma para cada procedencia.</p>
@@ -842,20 +905,20 @@ muestra50 &lt;- terneros %&gt;%
   sample_n(50)
 muestra50</code></pre>
 <pre><code>## # A tibble: 50 x 10
-##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria
-##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    
-##  1 GT54… Las Glicin… Macho 2017-06-06 00:00:00 Ternero  
-##  2 QX67… La Estrella Macho 2017-07-24 00:00:00 Ternero  
-##  3 NO13… Las Glicin… Macho 2017-07-24 00:00:00 Ternero  
-##  4 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero  
-##  5 PO15… Los Corral… Macho 2017-07-21 00:00:00 Ternero  
-##  6 QX67… La Estrella Macho 2017-07-23 00:00:00 Ternero  
-##  7 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero  
-##  8 CW82… La Rosita   Macho 2017-07-21 00:00:00 Ternero  
-##  9 OQ15… Las Glicin… Macho 2017-07-21 00:00:00 Ternero  
-## 10 GT54… Las Glicin… Macho 2017-07-21 00:00:00 Ternero  
-## # ... with 40 more rows, and 5 more variables: Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;,
-## #   Peso &lt;dbl&gt;, log_peso &lt;dbl&gt;, peso2 &lt;dbl&gt;</code></pre>
+##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria Fecha              
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
+##  1 OE52… La Alameda  Macho 2017-07-21 00:00:00 Ternero   2017-04-18 00:00:00
+##  2 PO15… Los Corral… Macho 2017-07-22 00:00:00 Ternero   2017-04-10 00:00:00
+##  3 FM58… La Rosita   Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00
+##  4 PO15… Los Corral… Macho 2017-06-07 00:00:00 Ternero   2017-04-11 00:00:00
+##  5 LH83… La Rosita   Macho 2017-07-21 00:00:00 Ternero   2017-04-06 00:00:00
+##  6 IA67… La Alameda  Macho 2017-07-24 00:00:00 Ternero   2017-04-18 00:00:00
+##  7 SZ20… Las Glicin… Macho 2017-06-06 00:00:00 Ternero   2017-04-10 00:00:00
+##  8 PO15… Los Corral… Macho 2017-07-23 00:00:00 Ternero   2017-04-11 00:00:00
+##  9 NS50… Los Corral… Macho 2017-07-21 00:00:00 Ternero   2017-04-12 00:00:00
+## 10 II64… La Rosita   Macho 2017-07-24 00:00:00 Ternero   2017-04-06 00:00:00
+## # … with 40 more rows, and 4 more variables: Hora &lt;dttm&gt;, Peso &lt;dbl&gt;,
+## #   log_peso &lt;dbl&gt;, peso2 &lt;dbl&gt;</code></pre>
 <pre class="r"><code># Una muestra de 10 novillos de cada procedencia
 muestra_procedencia &lt;- terneros %&gt;%
   group_by(Procedencia) %&gt;%
@@ -863,20 +926,20 @@ muestra_procedencia &lt;- terneros %&gt;%
 muestra_procedencia</code></pre>
 <pre><code>## # A tibble: 70 x 10
 ## # Groups:   Procedencia [7]
-##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria
-##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    
-##  1 GH73… Don Alberto Macho 2017-07-22 00:00:00 Ternero  
-##  2 GH73… Don Alberto Macho 2017-07-24 00:00:00 Ternero  
-##  3 GH73… Don Alberto Macho 2017-07-24 00:00:00 Ternero  
-##  4 GH73… Don Alberto Macho 2017-07-21 00:00:00 Ternero  
-##  5 GH73… Don Alberto Macho 2017-06-16 00:00:00 Ternero  
-##  6 GH73… Don Alberto Macho 2017-07-23 00:00:00 Ternero  
-##  7 GH73… Don Alberto Macho 2017-07-20 00:00:00 Ternero  
-##  8 GH73… Don Alberto Macho 2017-07-24 00:00:00 Ternero  
-##  9 GH73… Don Alberto Macho 2017-06-16 00:00:00 Ternero  
-## 10 GH73… Don Alberto Macho 2017-06-16 00:00:00 Ternero  
-## # ... with 60 more rows, and 5 more variables: Fecha &lt;dttm&gt;, Hora &lt;dttm&gt;,
-## #   Peso &lt;dbl&gt;, log_peso &lt;dbl&gt;, peso2 &lt;dbl&gt;</code></pre>
+##    IDV   Procedencia Sexo  `Fecha Ingreso`     Categoria Fecha              
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;     &lt;dttm&gt;             
+##  1 GH73… Don Alberto Macho 2017-07-24 00:00:00 Ternero   2017-04-20 00:00:00
+##  2 GH73… Don Alberto Macho 2017-07-24 00:00:00 Ternero   2017-04-20 00:00:00
+##  3 GH73… Don Alberto Macho 2017-07-24 00:00:00 Ternero   2017-04-20 00:00:00
+##  4 GH73… Don Alberto Macho 2017-07-22 00:00:00 Ternero   2017-04-20 00:00:00
+##  5 GH73… Don Alberto Macho 2017-07-22 00:00:00 Ternero   2017-04-20 00:00:00
+##  6 GH73… Don Alberto Macho 2017-07-24 00:00:00 Ternero   2017-04-20 00:00:00
+##  7 GH73… Don Alberto Macho 2017-06-16 00:00:00 Ternero   2017-04-20 00:00:00
+##  8 GH73… Don Alberto Macho 2017-07-23 00:00:00 Ternero   2017-04-20 00:00:00
+##  9 GH73… Don Alberto Macho 2017-07-22 00:00:00 Ternero   2017-04-20 00:00:00
+## 10 GH73… Don Alberto Macho 2017-07-22 00:00:00 Ternero   2017-04-20 00:00:00
+## # … with 60 more rows, and 4 more variables: Hora &lt;dttm&gt;, Peso &lt;dbl&gt;,
+## #   log_peso &lt;dbl&gt;, peso2 &lt;dbl&gt;</code></pre>
 </div>
 </div>
 
@@ -898,6 +961,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
