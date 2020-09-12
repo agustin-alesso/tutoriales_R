@@ -5,8 +5,10 @@ title: "Tutoriales de R"
 **R** es un lenguaje y entorno para el procesamiento, visualización y análisis estadístico de datos. Ha sido creado en 1993 por R. Gentleman y R. Ihaka, ambos científicos del Departamento de Estadística de la Universidad de Auckland (Nueva Zelanda). Actualmente su desarrollo y mantenimiento está a cargo del _R Core Team_. El sitio oficial del proyecto es [www.r-project.org](www.r-project.org)
 
 ```{r, echo = F, fig.cap = 'Página oficial de R Project', out.width = '70%', fig.align = 'center', fig.pos= 'h', out.extra=''} 
-#knitr::include_graphics('images/rproject.png', auto_pdf = T)
-webshot::webshot('http://www.r-project.org', file = "./images/rproject.png")
+if(!file.exists('./images/rproject.png')) {
+  webshot::webshot('http://www.r-project.org', file = "./images/rproject.png")
+}
+knitr::include_graphics('images/rproject.png', auto_pdf = T)
 ```
 
 Hoy en día, R es la _lingua franca_ del procesamiento y análisis de datos, tanto en el ámbito académico como comercial dado que es gratiuto, multiplataforma, de código abierto (_open source_, liberado con licencia GNU/GPL). Esto y el ecosistema de paquetes contribuidos por la comunidad de usuarios lo convierte en un software muy potente ya que expresa el estado del arte de los métodos estadísticos. 

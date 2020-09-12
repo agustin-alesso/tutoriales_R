@@ -18,7 +18,10 @@ R y RStudio se instalan por separado. R puede funcionar sin RStudio, en cambio �
 [^1]: CRAN se compone de un conjunto de servidores espejo distribuidos alrededor del mundo que tienen copias de R y sus paquetes. No es necesario escojer el espejo más cercano ya que el espejo nube (https://cloud.r-project.org) automáticamente determina de que servidor conviene realizar la descarga.
 
 ```{r, echo = F, fig.cap = 'Página de descaga de R', out.width = '95%', fig.align = 'center', fig.pos= 'h', out.extra=''} 
-webshot('https://cloud.r-project.org/', file = "./images/choose_OS.png")
+if(!file.exists('./images/rproject.png')) {
+  webshot('https://cloud.r-project.org/', file = "./images/choose_OS.png")
+}
+knitr::include_graphics('images/choose_OS.png', auto_pdf = T)
 ```
 
 2) Ejecutar el archivo descargado [^2] y seguir el asistente de instalación con todas las opciones por defecto. 
@@ -36,7 +39,10 @@ include_graphics('images/rgui.png', auto_pdf = T)
 1) Ir al sitio web de descarga de RStudio [https://rstudio.com/products/rstudio/download/#download](https://rstudio.com/products/rstudio/download/#download)
 
 ```{r, echo = F, out.width = "95%", fig.align = 'center', fig.cap = 'Página de descarga de RStudio desktop', fig.pos= 'h', out.extra=''}
-webshot('https://rstudio.com/products/rstudio/download', file = "./images/rstudio_download.png", selector = "body > div.wrapper > div:nth-child(4)")
+if(!file.exists('./images/rstudio_download.png')) {
+  webshot('https://rstudio.com/products/rstudio/download', file = "./images/rstudio_download.png", selector = "body > div.wrapper > div:nth-child(4)")
+}
+knitr::include_graphics('images/rstudio_download.png', auto_pdf = T)
 ```
 
 2) Descargar el archivo de instalación correspondiente a nuestros sistema operativo (e.g. Windows) y arquitectura (32 o 64 bits). En el caso de contar con un sistema operativo 32 bits es necesario descargar la ultima version estable 32 bits que es `RStudio 1.2.5042` que se encuentra en el siguiente [link](https://rstudio.com/products/rstudio/older-versions/) [^3]
