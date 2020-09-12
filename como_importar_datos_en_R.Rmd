@@ -3,18 +3,22 @@ title: "¿Cómo importar datos en R?"
 output: html_document
 ---
 
-Los datos se pueden almacenar en diversos formatos. Los más comunes son archivos de texto (\*.txt, \*.dat, etc) o texto separado por comas (\*.csv), o bien en planillas de cálculos (\*.xls o \*.xlsx). Existen diversas funciones que vienen por defecto en **R** o bien en paquetes específicos que permiten leer virtualmente cualquier formato de archivos. 
+Los datos se pueden almacenar en diversos formatos. Los más comunes son archivos de texto (`*.txt`, `*.dat`, etc) o texto separado por comas (`*.csv`), o bien en planillas de cálculos (`*.xls` o `*.xlsx`). Existen diversas funciones que vienen por defecto en **R** o bien en paquetes específicos que permiten leer virtualmente cualquier formato de archivos. 
 
-**RStudio** cuenta con un asistente de importación de datos (`File > Import Dataset`) que brinda interfase a varias funciones especializadas en la importación de datos de paquetes específicos como `readr`, `readxl`, etc. No obstante es conveniente destinar un par de lineas en nuestro script para declarar de donde vienen los datos. 
+**RStudio** cuenta con un asistente de importación de datos (`File > Import Dataset`) que brinda interfase a varias funciones especializadas en la importación de datos de paquetes específicos como `readr`, `readxl`, etc. No obstante es conveniente destinar un par de lineas en nuestro script para declarar de donde vienen los datos de modo tal que sea reproducible. 
 
 ## Desde el importador de datos de RStudio (`Import Dataset`)
 
-En el menu `File > Import Dataset` o bien el ícono del panel `Environment` despliega una lista con disitintas opciones de importación:
+En el menú `File > Import Dataset` o bien el ícono del panel `Environment` despliega una lista con disitintas opciones de importación:
 
 1. `From text (base)...` para importar datos desde archivos de texto usando las funciones `read.table()` y relacionadas del paquete `base` de **R**.
 2. `From text (readr)...` para importar datos desde archivos de texto usando las funciones `read_table()` y relacionadas del paquete `readr`.
 3. `From Excel (readxl)...` para importar datos desde planillas de cáclulo MS Excel usando el paquete `readxl`.
 4. `From SPSS/SAS/Stata...` para importar datos desde archivos de otros paquetes estadísicos `SPSS/SAS/Stata` usando el paquete `heaven`.
+
+```{r, echo = F, out.width = "75%", fig.align = 'center', fig.pos= 'h', out.extra='', fig.cap="Importador de datos"}
+include_graphics("images/import_dataset.png", auto_pdf = T)
+```
 
 A continuación se detalla el cuadro de diálogo de la alternativa `From Excel` el cual es similar a 2, 3 y 4.
 
@@ -22,7 +26,7 @@ A continuación se detalla el cuadro de diálogo de la alternativa `From Excel` 
 include_graphics("images/import_dataset_menu.png", auto_pdf = T)
 ```
 
-Este menu tiene cuatro paneles:
+Este menú tiene cuatro paneles:
 
 1. Una barra de direccion para indicar la ruta al archivo o URL.
 
@@ -32,7 +36,7 @@ Este menu tiene cuatro paneles:
 
 4. Vista previa del código. En esta parte se puede visualizar como se construye el comando que se ejecturará al clickear en `Import`.
 
-**Aclaración**: es muy importante que el código generado por este asistente sea incluido en el script para futuras seciones.
+**Aclaración**: es muy importante que el código generado por este asistente sea incluido en el script para futuras sesiones.
 
 ## Desde la consola
 

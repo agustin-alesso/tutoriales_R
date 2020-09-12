@@ -9,7 +9,7 @@ library(knitr)
 opts_chunk$set(comment = NA)
 ```
 
-En DCA vimos un procedimiento para obtener las medias de los tratamientos, así como los errores estándar e intervalos de confianza. Esto se hacía ajustando un modelo de celdas usando "- 1". Por ejemplo, usando los datos del Ejercicio 1 del TP2:
+En DCA vimos un procedimiento para obtener las medias de los tratamientos, así como los errores estándar e intervalos de confianza. Esto se hacía ajustando un modelo de celdas usando removiendo la ordenada al origen con `- 1`. Por ejemplo, usando los datos del Ejercicio 1 del TP2:
 
 ```{r}
 trigo_DCA <- read.csv("trigo_variedades.csv")

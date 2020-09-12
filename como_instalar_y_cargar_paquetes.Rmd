@@ -37,6 +37,16 @@ library(agricolae)
 
 A diferencia de `install.packages()`, la carga de los paquetes es individual, es decir, debejos ejecutar `library()` por cada paquete que querramos cargar.
 
+## Usar funciones sin cargar el paquete
+
+A veces nuestro análisis solamente necesita alguna función especifica de un paquete determinado y esta función es usada una única vez en la sesión. En esos casos puede ser conveniente solamente acceder a dicha función sin cargar todo el paquete en el entorno. Para eso se utiliza la sintaxis `paguete::funcion()`.
+
+
+```{r, eval = F}
+# Solamente usar la función read_excel() sin cargar readxl
+datos <- readxl::read_excel('mi_archivo_de_datos.xlsx')
+```
+
 ## Remover paquetes del entorno de trabajo
 
 Si por alguna circunstancia cargamos un paquete por error y queremos removerlo del entorno de trabajo (no de nuestra máquina), es necesario usar la función `detach()`
