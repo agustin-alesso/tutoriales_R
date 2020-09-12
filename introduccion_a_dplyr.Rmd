@@ -277,6 +277,10 @@ terneros %>%
 
 El verbo `sample_n()` and `sample_frac()` son útiles para tomar muestras aleatorias (con o sin reposición)  de un conjunto de observaciones. También se puede hacer por subgrupo!
 
+```{r echo = F}
+set.seed(2020)
+```
+
 ```{r}
 # Una muestra de 50 novillos
 muestra50 <- terneros %>%
