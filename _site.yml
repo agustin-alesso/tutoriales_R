@@ -17,8 +17,6 @@ navbar:
           href: introduccion_a_dplyr.html
         - text: "Introducción a ggplot2"
           href: introduccion_a_ggplot2.html
-        - text: "Clase"
-          href: 02_Probabilidad.html
 
   right:
     - text: "por Agustín Alesso"
@@ -27,5 +25,6 @@ output:
   html_document:
     theme: paper
     css: 'styles.css'
-output_dir: "."
-    
+    logo: images/logofca2020.jpg
+
+output_dir: "." 
