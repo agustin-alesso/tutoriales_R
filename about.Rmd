@@ -1,6 +1,0 @@
----
-title: "Acerca de"
-output: html_document
----
-
-pendiente
