@@ -10,11 +10,11 @@ output:
 
 **R** cuenta con tres sistemas para graficar:
 
-- El básico o `base plot system`, que viene por defecto y tiene funciones para hacer gráficos simples `plot()` y otras (`hist()`, `barplot()`, `boxplot()`, etc). Usa un enfoque lienzo y lapiz donde cada capa se tiene que ir agregando una por una. El para gráficos más complejos (con subgrupos o multipanel) requiere programar más. Una desventaja es la sintaxis poco consistente.
+- El básico o `base plot system`, que viene por defecto y tiene funciones para hacer gráficos simples `plot()` y otras (`hist()`, `barplot()`, `boxplot()`, etc). Usa un enfoque por capas donde el gráfico final es una sumatoria de capas que se agregan una a la vez. Generalmente es OK para gráficos simples y para gráficos más complejos (con subgrupos o multipanel) requiere programar más. Una desventaja es la sintaxis poco consistente.
 
-- El paquete `lattice` desarrollado por Deepayan Sarkar, que implementa graficos tipo `trellis` (multipanel). Al contraro de el paquete `base`, `lattice` tiene un sintaxis más coherente y en vez de tener un enfoque _lienzo y lápiz_, todos los componentes del gráfico se declaran en una función. muy conveniente para graficos condicionales pero complicada para combinar gráficos o hacer ajustes finos.
+- El paquete `lattice` desarrollado por Deepayan Sarkar, que implementa graficos tipo `trellis` (multipanel). Al contraro de el paquete `base`, `lattice` tiene un sintaxis más coherente y en vez de tener un enfoque por capas, todos los componentes del gráfico se declaran en una función. muy conveniente para gráficos condicionales pero complicada para combinar gráficos o hacer ajustes finos.
 
-- El paquete `ggplot2`, desarrollado por [Hadley Wickham](http://hadley.nz/), está basado en la filosofía _Gramática de gráficos_ (_grammar of graphics_). Combina los dos enfoques: _lienzo-lápiz_ y _función_. Uno provee los datos, indica que variables asignar a las estéticas (ejes, escalas, colores, símbolos) y tipo de gráfico hacer y `ggplot2` se encarga del resto. Puede ir agregando capas. Es muy potente para la exploración y visualización de datos en formato de tabla con filas (observaciones) y columnas (variables).
+- El paquete `ggplot2`, desarrollado por [Hadley Wickham](http://hadley.nz/), está basado en la filosofía _Gramática de gráficos_ (_grammar of graphics_). Combina los dos enfoques: _por capas_ y _función_. Uno provee los datos, indica que variables asignar a las estéticas (ejes, escalas, colores, símbolos) y las geometrías o formas que se quieren graficar y `ggplot2` se encarga del resto. Se puede ir agregando capas. Es muy potente para la exploración y visualización de datos en formato de tabla con filas (observaciones) y columnas (variables).
 
 ## ¿Cómo conseguir `ggplot2`?
 
@@ -40,8 +40,7 @@ library("tidyverse")
 
 **R** va a avisarnos en la consola que esta enmascarando (reemplazando) algunas funciones que ya estaban en el entorno, o bien el paquete nos devuelve algun mensaje. A menos que diga `Error ...`, eso está bien.
 
-Para ilustrar el uso del paquete vamos a usar los datos contenidos en el archivo [`pesada_terneros.xlsx`](https://github.com/Estadistica-FCA/tutoriales_R/raw/master/data/pesada_terneros.xlsx).
-
+Para ilustrar el uso del paquete vamos a usar los datos contenidos en el archivo `r xfun::embed_file("./data/pesada_terneros.xlsx", text = "pesada_terneros.xlsx")`.
 
 ```{r}
 library(readxl)
@@ -50,86 +49,116 @@ terneros <- read_excel("./data/pesada_terneros.xlsx")
 
 ## Partes básicas de un gráfico
 
-Si bien es dificil resumir como trabaja `ggplot2` en un párrafo, la estrategia para graficar puede resumirse así:
+Si bien es difícil resumir como trabaja `ggplot2` en un párrafo, la estrategia para graficar puede resumirse así:
 
-1. Se comienza con `ggplot()` para suministrar el set de datos y se definen. Se definen los parámetros estéticos, i.e. que variables van a los ejes, colores, escales, etc., con la `aes()`.
-
-En este caso el set de datos es `terneros` y queremos hacer un histograma. En el eje `x` vamos a indicar el `Peso` y en `relleno` vamos a indicar la `Procedencia`
+1. Se comienza con `ggplot()` para indicar el set de datos de donde se van a tomar los nomers de las variables.
 
 ```{r}
 # Iniciar objeto
-p <- ggplot(terneros, aes(x = Peso, fill = Procedencia))
-p
+ggplot(terneros)
 ```
 
-2. Luego agregar las capas o layers con las geometrías `geom_*` que uno quiere graficar (tipo de gráfico)
+   Como vemos esto genera un plot en blanco
 
-En este caso como es un histograma entonces `geom_histogram()` es la geometría indicada.
+2. Luego se y se definen los parámetros estéticos, i.e. que variables van a los ejes, colores, escales, etc., con la función `aes()`. En este caso el set de datos es `terneros` y queremos hacer un histograma. En el eje `x` vamos a indicar el `Peso`. Para concatenar funciones se usa `+`.
 
 ```{r}
-# Agregar capa histograma
-p <- p + geom_histogram()
-p
+ggplot(terneros) +                    # Definir el set de datos
+  aes(x = Peso)                       # Definir variables para estéticas
 ```
 
-3. Si es necesario ajustar la escala de colores con `scales_`. En este caso vamos a probar un gradiente de colores con `scale_fill_brewer()`.
+   Ahora el gráfico ya muestra la variable `Peso` en el eje `x` definiendo un rango.
+
+3. Luego agregar las capas o layers con las geometrías `geom_*` que uno quiere graficar (tipo de gráfico). En este caso como es un histograma entonces `geom_histogram()` es la geometría indicada.
 
 ```{r}
-# Modificar escala de colores
-p <- p + scale_fill_brewer(palette = "RdYlGn", type = "div")
-p
+ggplot(terneros) +                     # Definir el set de datos
+  aes(x = Peso) +                      # Definir variables para estéticas
+  geom_histogram()                     # Agregar capa de geometría
 ```
 
+   Ahora el gráfico va tomando forma.
 
-4. Suponiendo que queremos dividir en paneles se puede usar `factes_wrap()`. En este caso agregamos `Fecha` como facets. 
+4. Podemos agregar más información al gráfico mapeando más varialbes. Por ejemplo, supongamos que queremos colorear los istogramas según procedencia de terneros. Para esto vamos a mapear la variable `Procedencia` en el argumento de `fill` (relleno).
 
 ```{r}
-p <- p + facet_wrap(~ as.factor(Fecha))
-p
+ggplot(terneros) +                      # Definir el set de datos
+  aes(x = Peso, fill = Procedencia) +   # Definir variables para estéticas
+  geom_histogram()                     # Agregar capa de geometría
 ```
 
-5. Se puede modificar los ejes de coordenadas con las funciones de tipo `coords_()`. Por ejemplo, para ilustrar vamos a rotar el gráfico.
+   Así como `fill` tenemos otros argumentos de acuerdo al tipo de gráfico: `color` (color de linea), `linetype` (tipo de linea), `width` (ancho), `alpha` (transparencia), etc.
+
+6. Otra alternativa util es dividir el gráfico en paneles o `facets`. Esto se logra con `facet_wrap()` o `facet_grid()` dependiendo si usamos una o varias variables para definir los paneles. Por ejemplo, agreguemos la `Fecha`. 
 
 ```{r}
-p <- p + coord_flip()
-p
+ggplot(terneros) +                      # Definir el set de datos
+  aes(x = Peso, fill = Procedencia) +   # Definir variables para estéticas
+  geom_histogram() +                    # Agregar capa de geometría
+  facet_wrap(~ factor(Fecha))           # Dividir por paneles
 ```
 
-6. Por último se pueden modificar los títulos de los ejes y otros detalles como la leyenda
+   Así, este gráfico permite ver la distribución de los pesos de los terneros en función
+de la procedencia y la fecha de ingreso.
+
+## Modificaciones
+
+Por lo general los valores por defecto de `ggplot2` permiten lograr visualizaciones aceptables. No obstante, las posibilidades para modificar el gráfico son infinitas. Por ejemplo: 
+
+- Se puede modificar las escalas (x, y, colores, etc.) con las funciones `scale_*`. En este caso vamos a probar un gradiente de colores con `scale_fill_brewer()`.
 
 ```{r}
-p <- p + labs(x = "Peso (kg)", y = "frecuencia",
-              fill = "Procedencia")
-p
+ggplot(terneros) +                      # Definir el set de datos
+  aes(x = Peso, fill = Procedencia) +   # Definir variables para estéticas
+  geom_histogram() +                    # Agregar capa de geometría
+  facet_wrap(~ factor(Fecha)) +         # Dividir por paneles
+  scale_fill_brewer(palette = "RdYlGn") # Cambiar colores
 ```
 
-## Todo en un solo paso
-
-Anteriormente fuimos agregando partes al gráfico. Una característica de `ggplot2` es que mediante `+` se pueden ir combinando los comandos.
+- Se puede modificar los ejes de coordenadas con las funciones de tipo `coord_*`. Por ejemplo, para ilustrar vamos a rotar el gráfico con `coord_flip()`.
 
 ```{r}
-p <- ggplot(terneros, aes(x = Peso, fill = Procedencia)) +
-  geom_histogram() +
-  scale_fill_brewer(palette = "RdYlGn", type = "div") +
-  facet_wrap(~ as.factor(Fecha)) +
-  coord_flip() + 
-  labs(x = "Peso (kg)", y = "frecuencia", 
+ggplot(terneros) +                         # Definir el set de datos
+  aes(x = Peso, fill = Procedencia) +      # Definir variables para estéticas
+  geom_histogram() +                       # Agregar capa de geometría
+  facet_wrap(~ factor(Fecha)) +            # Dividir por paneles
+  scale_fill_brewer(palette = "RdYlGn") +  # Cambiar colores
+  coord_flip()                             # Rotar ejes
+```
+
+  No tiene mucho sentido.
+
+- Por último se pueden modificar los títulos de los ejes y otros detalles como la leyenda con `labs()` (labels)
+
+```{r}
+ggplot(terneros) +                         # Definir el set de datos
+  aes(x = Peso, fill = Procedencia) +      # Definir variables para estéticas
+  geom_histogram() +                       # Agregar capa de geometría
+  facet_wrap(~ factor(Fecha)) +            # Dividir por paneles
+  scale_fill_brewer(palette = "RdYlGn") +  # Cambiar colores
+  labs(x = "Peso (kg)", y = "frecuencia",  # Cambiar rótulos
        fill = "Procedencia")
-p
 ```
 
-O más avanzado, agregando estadísticas de resumen calculadas
+## Algo más avanzado
+
+Los gráficos se pueden construir usando varios set de datos. Por ejemplo, vamos a crear una tabla con las medias de cada `Procedencia` y luego la vamos a agregar esta información a un gráfico de caja como un punto.
 
 ```{r}
-# Agregar linea representando medias por procedencia  y fecha
+# Calcular media por procedencia y fecha
 library(dplyr)
 med <- terneros %>% 
-  group_by(Procedencia, Fecha) %>%
+  group_by(Procedencia) %>%
   summarise(media = mean(Peso))
 head(med)
+```
 
-# Combinar en el grafico (coord_cartesian para que vuelva a horizontal)
-p + coord_cartesian() +
-  geom_vline(data = med, aes(xintercept = media, color = Procedencia)) +
-  scale_color_brewer(palette = "RdYlGn", type = "div")
+Luego, para incorporarlo al gráfico
+
+```{r}
+ggplot(terneros) +                          # Definir el set de datos
+  aes(x = Procedencia, y = Peso) +          # Definir variables para estéticas
+  geom_boxplot() +                          # Agregar capa de geometría box-plot
+  geom_point(data = med, aes(y = media)) +  # Agregar puntos con la media
+  labs(x = "Procedencia", y = "Peso (kg)")  # Cambiar rótulos
 ```
